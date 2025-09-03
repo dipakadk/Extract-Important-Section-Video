@@ -1,6 +1,8 @@
-def main():
-    print("Hello from extractimpvideo!")
+import os
+import warnings
+warnings.filterwarnings("ignore")
+from moviepy import VideoFileClip
+from fastapi import FastAPI, UploadFile, File, HTTPException
+from pydub import AudioSegment
 
-
-if __name__ == "__main__":
-    main()
+print("success")
