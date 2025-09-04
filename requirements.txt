@@ -1,3 +1,7 @@
 moviepy
 fastapi
 pydub
+python-multipart
+uvicorn
+openai
+srt
