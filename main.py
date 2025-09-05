@@ -37,6 +37,8 @@ async def convert_video_to_audio(file: UploadFile = File(...)):
         
         video_file = VideoFileClip(file)
         
+        clip = []
+        # for i,sec in enumerate()
         
         
         
@@ -50,7 +52,8 @@ async def convert_video_to_audio(file: UploadFile = File(...)):
         
         
         
-        return transcript
+        
+        return "transcript"
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
