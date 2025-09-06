@@ -1,18 +1,14 @@
 from typing import List
 from datetime import datetime
 from llm_models.chat_model_schema import ImportantSection
-from get_section import processing_final_result
+from services.get_section import processing_final_result
 
 
 
 
 def time_to_seconds(time_str: str) -> float:
     t = datetime.strptime(time_str, "%H:%M:%S.%f")
-    return t.hour * 3600 + t.minute * 60 + t.second + t.microsecond / 1_000_000  # Convert microseconds to seconds
-
-
-
-
+    return t.hour * 3600 + t.minute * 60 + t.second + t.microsecond / 1_000_000  
 
 
 def remove_overlaps(sections: List[ImportantSection]) -> List[ImportantSection]:
