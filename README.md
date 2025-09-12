@@ -3,19 +3,17 @@
 
 This project extracts the **most important sections** from a given video. The final output is a shortened video containing only the key highlights.
 
-
 ## Features
 - Input a video (MP4 format)  
 - Convert video to audio (MP3 format)  
--  Transcribe audio using **OpenAI Whisper**  
+- Transcribe audio using **OpenAI Whisper**  
 - Generate subtitle (`.srt`) files  
 - Use **LLM (OpenAI)** to analyze transcripts  
 - Extract important sections with timestamps  
 - Generate short clips of important sections  
 - Merge clips into a final highlight video  
 
-
-## 🛠️ Workflow
+## Workflow
 
 ```mermaid
 flowchart LR
@@ -31,7 +29,7 @@ flowchart LR
 
 ---
 
-##  Project Structure
+## Project Structure
 
 ```
 EXTRACTIMPVIDEO/
@@ -66,7 +64,7 @@ EXTRACTIMPVIDEO/
 
 ---
 
-## 🚀 Installation
+## Installation
 
 This project uses **uv** for package management.
 
@@ -92,7 +90,7 @@ This project uses **uv** for package management.
 
 ---
 
-## ▶ Usage
+## Usage
 
 Run the project with:
 
@@ -114,10 +112,9 @@ uv run python main.py --input path/to/video.mp4 --output path/to/output.mp4
 
 ---
 
-
-
-##  License
+## License
 
 This project is licensed under the **MIT License**.
 
 ```
+
