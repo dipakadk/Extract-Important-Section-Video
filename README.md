@@ -17,17 +17,15 @@ This project extracts the **most important sections** from a given video. The fi
 
 ```mermaid
 flowchart LR
-    A[Input Video (MP4 Format)] --> B[Convert Video to Audio (MP3 Format)]
-    B --> C[Audio Transcription (OpenAI Whisper Model)]
-    C --> D[Generate SRT File]
-    D --> E[LLM (OpenAI)]
-    E --> F[Extract Important Topics & Sections with Timestamps]
-    F --> G[Generate Important Section-wise Video Clip]
-    G --> H[Merge Video Clips]
-    H --> I[Output (MP4 Format)]
-````
+    A["Input Video (MP4 Format)"] --> B["Convert Video to Audio (MP3 Format)"]
+    B --> C["Audio Transcription (OpenAI Whisper Model)"]
+    C --> D["Generate SRT File"]
+    D --> E["LLM (OpenAI)"]
+    E --> F["Extract Important Topics & Sections with Timestamps"]
+    F --> G["Generate Important Section-wise Video Clip"]
+    G --> H["Merge Video Clips"]
+    H --> I["Output (MP4 Format)"]
 
----
 
 ## Project Structure
 
@@ -95,7 +93,7 @@ This project uses **uv** for package management.
 Run the project with:
 
 ```bash
-uv run python main.py --input path/to/video.mp4 --output path/to/output.mp4
+uv run uvicorn main:app --reload
 ```
 
 * Input: Original video (`.mp4`)
@@ -114,7 +112,4 @@ uv run python main.py --input path/to/video.mp4 --output path/to/output.mp4
 
 ## License
 
-This project is licensed under the **MIT License**.
-
-```
-
+[MIT License](https://opensource.org/licenses/MIT).
