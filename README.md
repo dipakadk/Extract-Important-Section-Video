@@ -96,14 +96,6 @@ Start the FastAPI server with:
 uv run uvicorn main:app --reload
 ```
 
-Then you can send a request (example using `curl`):
-
-```bash
-curl -X POST "http://127.0.0.1:8000/extract" \
-     -F "input_video=@path/to/video.mp4" \
-     -F "output=path/to/output.mp4"
-```
-
 * Input: Original video (`.mp4`)
 * Output: Highlighted video (`.mp4`) will be generated and saved in the specified path.
 
