@@ -25,7 +25,7 @@ flowchart LR
     F --> G["Generate Important Section-wise Video Clip"]
     G --> H["Merge Video Clips"]
     H --> I["Output (MP4 Format)"]
-
+````
 
 ## Project Structure
 
@@ -90,14 +90,22 @@ This project uses **uv** for package management.
 
 ## Usage
 
-Run the project with:
+Start the FastAPI server with:
 
 ```bash
 uv run uvicorn main:app --reload
 ```
 
+Then you can send a request (example using `curl`):
+
+```bash
+curl -X POST "http://127.0.0.1:8000/extract" \
+     -F "input_video=@path/to/video.mp4" \
+     -F "output=path/to/output.mp4"
+```
+
 * Input: Original video (`.mp4`)
-* Output: Highlighted video (`.mp4`)
+* Output: Highlighted video (`.mp4`) will be generated and saved in the specified path.
 
 ---
 
@@ -112,4 +120,4 @@ uv run uvicorn main:app --reload
 
 ## License
 
-[MIT License](https://opensource.org/licenses/MIT).
+This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
