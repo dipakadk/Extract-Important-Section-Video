@@ -25,6 +25,7 @@ def generate_topic(file_path):
                 {format_instruction}
 
                 ## Provide the JSON data only. Do not give explaination and steps involved.
+                Do not add any backticks or any unwanted symbols in the response else you will be penalized.
                 """
     template = ChatPromptTemplate.from_template(template=template_instruction, partial_variables={"format_instruction": output_parser.get_format_instructions()})
     topic_chai = template | llm | output_parser
