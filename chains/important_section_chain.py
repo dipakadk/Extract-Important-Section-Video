@@ -24,6 +24,7 @@ def get_imp_section_template(processed_text):
     **Now extract the most important spoken sentences/paragraphs with their timestamps.**
 
     # Double verify time-stamps. Check timestamp very properly and include the same as provided in srt content. 
+    Do not add any backticks or any unwanted symbols in the response else you will be penalized.
     """
 
     temp = PromptTemplate.from_template(
