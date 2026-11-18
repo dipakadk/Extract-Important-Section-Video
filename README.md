@@ -99,6 +99,16 @@ uv run uvicorn main:app --reload
 * Input: Original video (`.mp4`)
 * Output: Highlighted video (`.mp4`) will be generated and saved in the specified path.
 
+### Streamlit interface
+
+Run the interactive interface with:
+
+```bash
+uv run streamlit run streamlit_app.py
+```
+
+Choose either a local video file or a YouTube URL. The interface processes the source through the same transcription and highlight workflow, then lets you preview and download the result. Supported local video formats include MP4, MOV, MKV, WebM, AVI, MPEG, WMV, FLV, M4V, 3GP, TS, MTS, M2TS, OGV, ASF, and VOB. Decoding depends on the codecs available in your FFmpeg installation. OpenAI API keys must be configured in `.env` as shown above.
+
 ---
 
 ## Dependencies
