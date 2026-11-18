@@ -58,6 +58,7 @@ if st.button("Create highlight video", type="primary", use_container_width=True)
     elif source_type == "YouTube link" and not youtube_url.strip():
         st.error("Paste a YouTube URL to continue.")
     else:
+        st.session_state.pop("highlight_video_bytes", None)
         with st.spinner("Processing video. Transcription and highlight selection can take a few minutes..."):
             try:
                 with tempfile.TemporaryDirectory(prefix="video-highlights-") as work_dir:
@@ -86,16 +87,20 @@ if st.button("Create highlight video", type="primary", use_container_width=True)
 
                     result = process_video(input_path, work_dir)
                     with open(result["final_video"], "rb") as final_video:
-                        video_bytes = final_video.read()
+                        st.session_state["highlight_video_bytes"] = final_video.read()
 
                 st.success("Your highlight video is ready.")
-                st.video(video_bytes)
-                st.download_button(
-                    "Download highlight video",
-                    data=video_bytes,
-                    file_name="video_highlights.mp4",
-                    mime="video/mp4",
-                    use_container_width=True,
-                )
             except Exception as error:
                 st.error(f"Video processing failed: {error}")
+
+if video_bytes := st.session_state.get("highlight_video_bytes"):
+    st.subheader("Highlight video")
+    st.video(video_bytes, format="video/mp4")
+    st.download_button(
+        "Download highlight video",
+        data=video_bytes,
+        file_name="video_highlights.mp4",
+        mime="video/mp4",
+        use_container_width=True,
+        key="download_highlight_video",
+    )
