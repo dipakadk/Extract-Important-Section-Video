@@ -1,55 +1,76 @@
 import os
 import srt
-from openai import OpenAI
 from datetime import timedelta
-from dotenv import load_dotenv
-load_dotenv()
 
-OPENAI_STT_API_KEY = os.getenv("OPENAI_STT_API_KEY")
-client = OpenAI(api_key=OPENAI_STT_API_KEY)
 
-def generate_srt_from_audio(input_audio_file: str,output_srt_file):
-    with open(input_audio_file, "rb") as audio_file: 
+def _transcribe_with_openai(input_audio_file: str):
+    from dotenv import load_dotenv
+    from openai import OpenAI
+
+    load_dotenv()
+    api_key = os.getenv("OPENAI_STT_API_KEY") or os.getenv("OPENAI_API_KEY")
+    if not api_key:
+        raise ValueError("Set OPENAI_STT_API_KEY or OPENAI_API_KEY to use OpenAI transcription.")
+
+    client = OpenAI(api_key=api_key)
+    with open(input_audio_file, "rb") as audio_file:
         transcript = client.audio.transcriptions.create(
             file=audio_file,
             model="whisper-1",
             response_format="verbose_json",
             timestamp_granularities=["segment"]
         )
-        
-        merged_segments = []
-        current_segment = {"start": None, "end": None, "text": ""}
+    return transcript.segments
 
-        for segment in transcript.segments:
-            if current_segment["start"] is None:
-                current_segment["start"] = segment.start
-            
-            if current_segment["text"]:
-                current_segment["text"] += " " + segment.text.strip()
-            else:
-                current_segment["text"] = segment.text.strip()
-            
-            current_segment["end"] = segment.end
 
-            if segment.text.strip().endswith("."):
-                merged_segments.append(current_segment.copy())
-                current_segment = {"start": None, "end": None, "text": ""}
+def _transcribe_with_local_whisper(input_audio_file: str):
+    from faster_whisper import WhisperModel
 
-        if current_segment["text"]:
-            merged_segments.append(current_segment)
+    model = WhisperModel("base", device="cpu", compute_type="int8")
+    segments, _ = model.transcribe(input_audio_file, vad_filter=True)
+    return segments
 
-                
-        srt_subtitles = []
-        for i, segment in enumerate(merged_segments):
-            start = timedelta(seconds=segment["start"])
-            end = timedelta(seconds=segment["end"])
-            subtitle = srt.Subtitle(index=i + 1, start=start, end=end, content=segment["text"])            
-            srt_subtitles.append(subtitle)
-            
-        srt_content = srt.compose(srt_subtitles)
-        try:
-            with open(output_srt_file,"w",encoding="utf-8") as f:
-                f.write(srt_content)
-            print("SRT file generated successfully!!!!")
-        except Exception as e:
-            return f"Error while writing SRT file: {e}"
+
+def generate_srt_from_audio(
+    input_audio_file: str,
+    output_srt_file: str,
+    transcription_provider: str = "openai",
+):
+    if transcription_provider == "openai":
+        segments = _transcribe_with_openai(input_audio_file)
+    elif transcription_provider == "local":
+        segments = _transcribe_with_local_whisper(input_audio_file)
+    else:
+        raise ValueError(f"Unsupported transcription provider: {transcription_provider}")
+
+    merged_segments = []
+    current_segment = {"start": None, "end": None, "text": ""}
+
+    for segment in segments:
+        text = segment.text.strip()
+        if not text:
+            continue
+        if current_segment["start"] is None:
+            current_segment["start"] = segment.start
+
+        current_segment["text"] = f'{current_segment["text"]} {text}'.strip()
+        current_segment["end"] = segment.end
+
+        if text.endswith("."):
+            merged_segments.append(current_segment.copy())
+            current_segment = {"start": None, "end": None, "text": ""}
+
+    if current_segment["text"]:
+        merged_segments.append(current_segment)
+
+    subtitles = [
+        srt.Subtitle(
+            index=index,
+            start=timedelta(seconds=segment["start"]),
+            end=timedelta(seconds=segment["end"]),
+            content=segment["text"],
+        )
+        for index, segment in enumerate(merged_segments, start=1)
+    ]
+    with open(output_srt_file, "w", encoding="utf-8") as output_file:
+        output_file.write(srt.compose(subtitles))
