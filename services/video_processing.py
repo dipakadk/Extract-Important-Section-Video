@@ -31,11 +31,9 @@ def process_video(
     clips = []
     final_clip = None
     try:
-        for section in filtering_section(srt_path, llm_provider, ollama_model):
+        for section in filtering_section(srt_path, llm_provider, ollama_model, video.duration):
             start_time = time_to_seconds(section.start_timestamp)
             end_time = time_to_seconds(section.end_timestamp)
-            if start_time is None or end_time is None:
-                continue
             clips.append(video.subclipped(start_time, end_time))
 
         if not clips:

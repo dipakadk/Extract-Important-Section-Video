@@ -50,8 +50,9 @@ def extract_subtitles_for_topics(subtitles, topics):
 
 
 
-def processing_final_result(file_path, llm_provider="openai", ollama_model=None):
-    llm = ChatModelProvider(provider=llm_provider, model=ollama_model).create()
+def processing_final_result(file_path, llm_provider="openai", ollama_model=None, llm=None):
+    if llm is None:
+        llm = ChatModelProvider(provider=llm_provider, model=ollama_model).create()
     topics = generate_topic(file_path, llm).topics
 
     topic_sentences = extract_subtitles_for_topics(subtitle_data(file_path), topics)

@@ -1,14 +1,14 @@
 from typing import List
-from datetime import datetime
-from llm_models.chat_model_schema import ImportantSection
+from llm_models.chat_model_schema import ChatModelProvider, ImportantSection
 from services.get_section import processing_final_result
+from services.timestamp_validation import timestamp_to_milliseconds
+from chains.quality_control_chain import QualityControlAgent
 
 
 
 
 def time_to_seconds(time_str: str) -> float:
-    t = datetime.strptime(time_str, "%H:%M:%S.%f")
-    return t.hour * 3600 + t.minute * 60 + t.second + t.microsecond / 1_000_000  
+    return timestamp_to_milliseconds(time_str) / 1000
 
 
 def remove_overlaps(sections: List[ImportantSection]) -> List[ImportantSection]:
@@ -29,9 +29,11 @@ def remove_overlaps(sections: List[ImportantSection]) -> List[ImportantSection]:
 
 
 
-def filtering_section(file_name, llm_provider="openai", ollama_model=None):
-    sections = processing_final_result(file_name, llm_provider, ollama_model).sections
+def filtering_section(file_name, llm_provider="openai", ollama_model=None, video_duration=None):
+    llm = ChatModelProvider(provider=llm_provider, model=ollama_model).create()
+    sections = processing_final_result(file_name, llm_provider, ollama_model, llm=llm).sections
 
+    sections = QualityControlAgent().run(sections, file_name, video_duration, llm)
     filtered_sections = remove_overlaps(sections)
     return filtered_sections
 
