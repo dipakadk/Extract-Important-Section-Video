@@ -29,8 +29,8 @@ def remove_overlaps(sections: List[ImportantSection]) -> List[ImportantSection]:
 
 
 
-def filtering_section(file_name):
-    sections= processing_final_result(file_name).sections
+def filtering_section(file_name, llm_provider="openai", ollama_model=None):
+    sections = processing_final_result(file_name, llm_provider, ollama_model).sections
 
     filtered_sections = remove_overlaps(sections)
     return filtered_sections

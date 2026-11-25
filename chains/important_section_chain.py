@@ -1,14 +1,8 @@
 from langchain.prompts import PromptTemplate
 from llm_models.chat_model_schema import imp_section_finder
-from dotenv import load_dotenv
-from langchain_openai import ChatOpenAI
-
-load_dotenv()
-import os
-llm = ChatOpenAI(api_key=os.getenv('OPENAI_API_KEY'),model='gpt-4o-mini',stream_usage=True)
 
 
-def get_imp_section_template(processed_text):
+def get_imp_section_template(processed_text, llm):
     template_ins = """
     You are an AI assistant that processes video subtitles and extracts the **most important spoken sentences/paragraphs** while ensuring their timestamps are **accurate**.
 

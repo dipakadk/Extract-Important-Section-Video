@@ -44,6 +44,17 @@ st.title("Find the moments that matter.")
 st.markdown('<p class="intro">Upload a video or paste a YouTube link. The same transcription and highlight workflow runs on either source.</p>', unsafe_allow_html=True)
 
 source_type = st.radio("Video source", ["Upload a video", "YouTube link"], horizontal=True)
+transcription_column, llm_column = st.columns(2)
+with transcription_column:
+    transcription_choice = st.radio(
+        "Speech-to-text model",
+        ["OpenAI", "Open-source (local Whisper)"],
+        horizontal=True,
+    )
+with llm_column:
+    llm_choice = st.radio("LLM model", ["OpenAI", "Ollama"], horizontal=True)
+transcription_provider = "openai" if transcription_choice == "OpenAI" else "local"
+llm_provider = llm_choice.lower()
 uploaded_file = None
 youtube_url = ""
 
@@ -85,7 +96,12 @@ if st.button("Create highlight video", type="primary", use_container_width=True)
                             raise ValueError("YouTube did not provide a downloadable video file.")
                         input_path = downloaded_files[0]
 
-                    result = process_video(input_path, work_dir)
+                    result = process_video(
+                        input_path,
+                        work_dir,
+                        transcription_provider=transcription_provider,
+                        llm_provider=llm_provider,
+                    )
                     with open(result["final_video"], "rb") as final_video:
                         st.session_state["highlight_video_bytes"] = final_video.read()
 

@@ -1,6 +1,7 @@
 
 import pysrt
 from chains import generate_topic,get_imp_section_template
+from llm_models.chat_model_schema import ChatModelProvider
 def read_srt(file_path):
     subs = pysrt.open(file_path)
     for sub in subs:
@@ -49,8 +50,9 @@ def extract_subtitles_for_topics(subtitles, topics):
 
 
 
-def processing_final_result(file_path):
-    topics = generate_topic(file_path).topics
+def processing_final_result(file_path, llm_provider="openai", ollama_model=None):
+    llm = ChatModelProvider(provider=llm_provider, model=ollama_model).create()
+    topics = generate_topic(file_path, llm).topics
 
     topic_sentences = extract_subtitles_for_topics(subtitle_data(file_path), topics)
 
@@ -58,6 +60,6 @@ def processing_final_result(file_path):
     for topic, sentences in topic_sentences.items():
             sample_text+=f"Title: {topic}\nSrt sections: {sentences['sections']}"
 
-    imp_sections_chain=get_imp_section_template(sample_text)
+    imp_sections_chain=get_imp_section_template(sample_text, llm)
 
     return imp_sections_chain

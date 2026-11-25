@@ -7,7 +7,14 @@ from .srt_generator import generate_srt_from_audio
 from .video_to_audio import convert_mp4_to_mp3
 
 
-def process_video(input_video_path, work_dir, final_video_path=None):
+def process_video(
+    input_video_path,
+    work_dir,
+    final_video_path=None,
+    transcription_provider="openai",
+    llm_provider="openai",
+    ollama_model=None,
+):
     os.makedirs(work_dir, exist_ok=True)
     audio_dir = os.path.join(work_dir, "audio")
     srt_path = os.path.join(work_dir, "generated_srt.srt")
@@ -18,13 +25,13 @@ def process_video(input_video_path, work_dir, final_video_path=None):
         output_folder=audio_dir,
         output_file_name="source_audio.mp3",
     )
-    generate_srt_from_audio(audio_path, srt_path)
+    generate_srt_from_audio(audio_path, srt_path, transcription_provider)
 
     video = VideoFileClip(input_video_path)
     clips = []
     final_clip = None
     try:
-        for section in filtering_section(srt_path):
+        for section in filtering_section(srt_path, llm_provider, ollama_model):
             start_time = time_to_seconds(section.start_timestamp)
             end_time = time_to_seconds(section.end_timestamp)
             if start_time is None or end_time is None:

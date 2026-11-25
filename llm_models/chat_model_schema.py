@@ -1,13 +1,7 @@
-import os
-from langchain_openai import ChatOpenAI
 from langchain.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
 from typing import List
-from dotenv import load_dotenv
-load_dotenv()
-
-
-llm = ChatOpenAI(api_key=os.getenv("OPENAI_API_KEY"),model="gpt-4o-mini")
+import os
 
 
 class VideoTopic(BaseModel):
@@ -29,3 +23,32 @@ class ImportantSection(BaseModel):
 class ImportantSectionsList(BaseModel):
     sections: List[ImportantSection] = Field(..., description="List of most important spoken sentences/paragraphs with timestamps.")
 imp_section_finder = PydanticOutputParser(pydantic_object=ImportantSectionsList)
+
+
+class ChatModelProvider:
+    def __init__(self, provider: str = "openai", model: str | None = None):
+        if provider not in {"openai", "ollama"}:
+            raise ValueError(f"Unsupported LLM provider: {provider}")
+        self.provider = provider
+        self.model = model
+
+    def create(self):
+        if self.provider == "openai":
+            from dotenv import load_dotenv
+            from langchain_openai import ChatOpenAI
+
+            load_dotenv()
+            api_key = os.getenv("OPENAI_API_KEY")
+            if not api_key:
+                raise ValueError("Set OPENAI_API_KEY to use the OpenAI LLM.")
+            return ChatOpenAI(
+                api_key=api_key,
+                model=self.model or os.getenv("OPENAI_LLM_MODEL", "gpt-4o-mini"),
+            )
+
+        from langchain_ollama import ChatOllama
+
+        return ChatOllama(
+            model=self.model or os.getenv("OLLAMA_MODEL", "llama3.1:8b"),
+            base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
+        )

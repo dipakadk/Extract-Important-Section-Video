@@ -1,6 +1,6 @@
 import os
 from langchain.prompts import PromptTemplate,ChatPromptTemplate
-from llm_models.chat_model_schema import llm,output_parser
+from llm_models.chat_model_schema import output_parser
 import pysrt
 
 
@@ -12,7 +12,7 @@ def get_text(srt_file_path):
     return  all_text
     
     
-def generate_topic(file_path):
+def generate_topic(file_path, llm):
     template_instruction = """You are an AI assistant that processes subtitles from the video to extract the different topics.
                 The subtitle content is provided in the double backticks: ``{srt_content}``.
 

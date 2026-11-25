@@ -6,9 +6,9 @@ This project extracts the **most important sections** from a given video. The fi
 ## Features
 - Input a video (MP4 format)  
 - Convert video to audio (MP3 format)  
-- Transcribe audio using **OpenAI Whisper**  
+- Transcribe audio using OpenAI Whisper or local open-source Whisper
 - Generate subtitle (`.srt`) files  
-- Use **LLM (OpenAI)** to analyze transcripts  
+- Analyze transcripts with an OpenAI or Ollama LLM
 - Extract important sections with timestamps  
 - Generate short clips of important sections  
 - Merge clips into a final highlight video  
@@ -107,13 +107,14 @@ Run the interactive interface with:
 uv run streamlit run streamlit_app.py
 ```
 
-Choose either a local video file or a YouTube URL. The interface processes the source through the same transcription and highlight workflow, then lets you preview and download the result. Supported local video formats include MP4, MOV, MKV, WebM, AVI, MPEG, WMV, FLV, M4V, 3GP, TS, MTS, M2TS, OGV, ASF, and VOB. Decoding depends on the codecs available in your FFmpeg installation. OpenAI API keys must be configured in `.env` as shown above.
+Choose either a local video file or a YouTube URL, then select a speech-to-text model and an LLM in the adjacent controls. Local Whisper runs the `base` model on CPU and downloads its model files on first use; it does not require an API key. Ollama must be installed and running locally, with the default model downloaded using `ollama pull llama3.2`. Set `OLLAMA_MODEL` or `OLLAMA_BASE_URL` to use a different model or server. The interface processes the source through the same transcription and highlight workflow, then lets you preview and download the result. Supported local video formats include MP4, MOV, MKV, WebM, AVI, MPEG, WMV, FLV, M4V, 3GP, TS, MTS, M2TS, OGV, ASF, and VOB. Decoding depends on the codecs available in your FFmpeg installation. `OPENAI_API_KEY` must be configured in `.env` when using OpenAI transcription or the OpenAI LLM.
 
 ---
 
 ## Dependencies
 
-* [OpenAI Whisper](https://github.com/openai/whisper) – Speech-to-text
+* [OpenAI Whisper API](https://platform.openai.com/docs/guides/speech-to-text) – Hosted speech-to-text
+* [faster-whisper](https://github.com/SYSTRAN/faster-whisper) – Local open-source speech-to-text
 * [OpenAI GPT Models](https://platform.openai.com/) – LLM for summarization
 * [MoviePy](https://zulko.github.io/moviepy/) – Video editing
 * [FFmpeg](https://ffmpeg.org/) – Audio & video conversion
